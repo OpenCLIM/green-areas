@@ -3,7 +3,7 @@ This model takes national scale datasets and clips them to a geographical area.
 
 ## Description
 National scale datasets are too large to upload onto DAFNI, and processing these large datasets is time extensive. Models such as City Catchment Analysis Tool,
-require vector data from the national datasets for a city of interest. The national data sets have been uploaded onto DAFNI in zip format for each 100km OS grid cell. 
+require vector data from the national datasets for a city of interest. The national data sets have been uploaded onto DAFNI in zip format for each 50km OS grid cell. 
 Geopackage files within the zip folders contain the vector data per 5km OS grid cell. This model identifies which 5km grid cells are contained within the boundary 
 file for the city of interest, and merges the geopackage to generate a single gpkg file for the city.
 
