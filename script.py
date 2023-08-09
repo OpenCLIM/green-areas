@@ -1,5 +1,6 @@
 import geopandas as gpd
 import pandas as pd
+import numpy as np
 import os
 import shutil
 from zipfile import ZipFile
@@ -20,7 +21,6 @@ greenareas_path_ = outputs_path + '/' + 'green_areas'
 if not os.path.exists(greenareas_path):
     os.mkdir(greenareas_path_)
 vector_path = os.path.join(inputs_path, 'vectors')
-
 
 # Identify input polygons and shapes (boundary of city, and OS grid cell references)
 boundary_1 = glob(boundary_path + "/*.*", recursive = True)
@@ -53,14 +53,7 @@ grid_50km.set_crs(epsg=27700, inplace=True)
 
 # Identify which of the 50km OS grid cells fall within the chosen city boundary
 cells_needed_50 = gpd.overlay(boundary,grid_50km, how='intersection')
-# print('grid_50:',cells_needed_50.head())
-
-
-# # Identify which of the 5km OS grid cells fall within the chosen city boundary
-# cells_needed_5 = gpd.overlay(boundary,grid_5km, how='intersection')
-# grid_5=cells_needed_5['tile_name']
-# grid_5=pd.DataFrame(grid_5)
-# print('grid_5:', grid_5)
+#print('grid_50:',cells_needed_50.head())
 
 # Establish which zip files need to be unzipped
 files_to_unzip=[]
@@ -71,7 +64,7 @@ for i in range(0,len(cells_needed_50)):
     name_path = os.path.join(vector_path, name + '.zip')
     files_to_unzip[i] = name_path
 
-# print(files_to_unzip)
+print('files_to_unzip_50km:',files_to_unzip)
 
 # Unzip the required files
 for i in range (0,len(files_to_unzip)):
@@ -80,22 +73,23 @@ for i in range (0,len(files_to_unzip)):
             # extract the files into the inputs directory
             zip.extractall(vector_path)
 
-
-# Identify which 5km cells lie within which 50km cells
-grid_5 = gpd.overlay(grid_5km,cells_needed_50, how='intersection')
-print('grid_5 :',grid_5.columns.tolist())
+# Identify which of the 5km OS grid cells fall within the chosen city boundary
+cells_needed_5 = gpd.overlay(boundary,grid_5km, how='intersection')
+grid_5=cells_needed_5['tile_name']
+grid_5=pd.DataFrame(grid_5)
+#print('grid_5:', grid_5)
 
 # Establish which zip files need to be unzipped
 files_to_unzip2=[]
 files_to_unzip2=pd.DataFrame(files_to_unzip2)
 files_to_unzip2=['XX' for n in range(len(grid_5))]
 for i in range(0,len(grid_5)):
-    name_folder=grid_5.tile_name_2[i].lower()
-    name_file=grid_5.tile_name_1[i]
-    name_path = os.path.join(vector_path, name_folder ,name_file + '.zip')
+    #name_folder=grid_5.tile_name[i].lower()
+    name_file=grid_5.tile_name[i]
+    name_path = os.path.join(vector_path, name_file + '.zip')#(vector_path, name_folder ,name_file + '.zip')
     files_to_unzip2[i] = name_path
 
-print(files_to_unzip2)
+#print('files_to_unzip_50km:',files_to_unzip2)
 
 # Unzip the required files
 for i in range (0,len(files_to_unzip2)):
@@ -105,18 +99,24 @@ for i in range (0,len(files_to_unzip2)):
             zip.extractall(vector_path)
 
 
-data_to_merge = glob(vector_path + "/*.gpkg", recursive = True)
-print('data_to_merge:',data_to_merge)
+data_to_merge = glob(vector_path + "/*.shp", recursive = True)
+#print('data_to_merge:',data_to_merge)
 
-# Create a geodatabase and merge the data from each gpkg together
+#Create a geodatabase and merge the data from each gpkg together
 original = []
 original=gpd.GeoDataFrame(original)
+
+
 for cell in data_to_merge:
     gdf = gpd.read_file(cell)
+    gdf = gdf.drop('fid', axis=1)
     original = pd.concat([gdf, original],ignore_index=True)
 
 # Print to a gpkg file
+original.reset_index(inplace=True, drop=True)
+original = original.set_crs(27700)
 original.to_file(os.path.join(vector_output),driver='GPKG',index=False)
+
 
 print('Running vector clip')
 
