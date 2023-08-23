@@ -73,6 +73,8 @@ for i in range (0,len(files_to_unzip)):
             # extract the files into the inputs directory
             zip.extractall(vector_path)
 
+print("50km Files successfully unzipped")
+
 # Identify which of the 5km OS grid cells fall within the chosen city boundary
 cells_needed_5 = gpd.overlay(boundary,grid_5km, how='intersection')
 grid_5=cells_needed_5['tile_name']
@@ -89,7 +91,7 @@ for i in range(0,len(grid_5)):
     name_path = os.path.join(vector_path, name_file + '.zip')#(vector_path, name_folder ,name_file + '.zip')
     files_to_unzip2[i] = name_path
 
-#print('files_to_unzip_50km:',files_to_unzip2)
+print('files_to_unzip_5km:',files_to_unzip2)
 
 # Unzip the required files
 for i in range (0,len(files_to_unzip2)):
@@ -98,9 +100,10 @@ for i in range (0,len(files_to_unzip2)):
             # extract the files into the inputs directory
             zip.extractall(vector_path)
 
+print("5km Files successfully unzipped")
 
 data_to_merge = glob(vector_path + "/*.shp", recursive = True)
-#print('data_to_merge:',data_to_merge)
+print('data_to_merge:',data_to_merge)
 
 #Create a geodatabase and merge the data from each gpkg together
 original = []
@@ -112,11 +115,12 @@ for cell in data_to_merge:
     gdf = gdf.drop('fid', axis=1)
     original = pd.concat([gdf, original],ignore_index=True)
 
+print('data merged successfully')
+
 # Print to a gpkg file
 original.reset_index(inplace=True, drop=True)
 original = original.set_crs(27700)
 original.to_file(os.path.join(vector_output),driver='GPKG',index=False)
-
 
 print('Running vector clip')
 
