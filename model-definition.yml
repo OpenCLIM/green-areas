@@ -35,8 +35,9 @@ spec:
           National vector datasets (saved by OS grid cells).
         path: inputs/vectors/
         required: false
-         
-        
+        default: 
+          - aa3dd494-2be9-40f2-811f-f6fc5b2f420f
+          
   outputs:
     datasets:
       - name: outputs/buildings/*
