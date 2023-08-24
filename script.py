@@ -60,7 +60,7 @@ files_to_unzip=[]
 files_to_unzip=pd.DataFrame(files_to_unzip)
 files_to_unzip=['XX' for n in range(len(cells_needed_50))]
 for i in range(0,len(cells_needed_50)):
-    name=cells_needed_50.tile_name[i].lower()
+    name=cells_needed_50.tile_name[i].upper()
     name_path = os.path.join(vector_path, name + '.zip')
     files_to_unzip[i] = name_path
 
