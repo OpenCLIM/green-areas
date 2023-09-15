@@ -36,7 +36,7 @@ spec:
         path: inputs/vectors/
         required: false
         default: 
-          - 2f414d0a-8586-4860-aeeb-eb435f8d5e3c
+          - 7b3346ff-9f5b-448a-89b5-94b9965c0e47
           
   outputs:
     datasets:
