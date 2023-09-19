@@ -40,8 +40,8 @@ spec:
           
   outputs:
     datasets:
-      - name: outputs/buildings/*
+      - name: outputs/green_areas/*
         type: folder
         description:
-          A gpgk of existing building data for the city of interest.
+          A gpgk of existing greenspace data for the city of interest.
         
